@@ -1,4 +1,5 @@
 "use client"
+import MainDashboard from "@/components/dashboard/MainDashboard";
 import { supabase } from "@/lib/supabase";
 
 export default function Home() {
@@ -25,10 +26,6 @@ export default function Home() {
   };
 
   return (
-    <div className="text-3xl font-bold text-red-500 flex gap-4 flex-col justify-center items-center h-screen">
-      <button onClick={fetchCompanies}>fetchCompanies</button>
-      <button onClick={fetchContracts}>fetchContracts</button>
-      <button onClick={fetchBankTransactions}>fetchBankTransactions</button>
-    </div>
+<><MainDashboard/></>
   );
 }
