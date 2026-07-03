@@ -1,44 +1,40 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "../supabase";
+import { fetchTransactionsByMonth } from "../apiCalls/FetchTransactionsByMonth";
+import { fetchContractsByMonth } from "../apiCalls/FetchContractsByMonth";
+import { fetchCompaniesByMonth } from "../apiCalls/FetchCompaniesByMonth";
 
-// ─── Query Keys ───────────────────────────────────────────────────────────────
+// ─── Query Key Factory ────────────────────────────────────────────────────────
 export const QUERY_KEYS = {
+  // 1. Define the "root folders"
   transactions: ["bank_transactions"] as const,
   contracts: ["contracts"] as const,
   companies: ["companies"] as const,
+  
+  // 2. (Optional but recommended) Define helpers for specific sub-folders
+  transactionsByMonth: (month: string) => [...QUERY_KEYS.transactions, month] as const,
+  contractsByMonth: (month: string) => [...QUERY_KEYS.contracts, month] as const,
+  companiesByMonth: (month: string) => [...QUERY_KEYS.companies, month] as const,
 };
 
-// ─── Fetch Hooks ──────────────────────────────────────────────────────────────
-export const useBankTransactions = () =>
+// -------------------------------------- HOOKS --------------------------------
+export const useBankTransactions = (selectedMonth: string) =>
   useQuery({
-    queryKey: QUERY_KEYS.transactions,
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("bank_transactions")
-        .select("*");
-      if (error) throw new Error(error.message);
-      return data;
-    },
+    // Using the factory function directly guarantees type safety and consistency
+    queryKey: QUERY_KEYS.transactionsByMonth(selectedMonth),
+    queryFn: () => fetchTransactionsByMonth(selectedMonth)
   });
 
-export const useContracts = () =>
+export const useContracts = (selectedMonth: string) =>
   useQuery({
-    queryKey: QUERY_KEYS.contracts,
-    queryFn: async () => {
-      const { data, error } = await supabase.from("contracts").select("*");
-      if (error) throw new Error(error.message);
-      return data;
-    },
+    queryKey: QUERY_KEYS.contractsByMonth(selectedMonth),
+    queryFn: () => fetchContractsByMonth(selectedMonth)
   });
 
-export const useCompanies = () =>
+export const useCompanies = (selectedMonth: string) =>
   useQuery({
-    queryKey: QUERY_KEYS.companies,
-    queryFn: async () => {
-      const { data, error } = await supabase.from("companies").select("*");
-      if (error) throw new Error(error.message);
-      return data;
-    },
+    queryKey: QUERY_KEYS.companiesByMonth(selectedMonth),
+    queryFn: () => fetchCompaniesByMonth(selectedMonth)
   });
 
 // ─── Auto-Matching Mutation ───────────────────────────────────────────────────
