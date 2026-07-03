@@ -1,7 +1,7 @@
-"use client"; // Required because we are using interactive hooks
+"use client"; 
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"; // Assuming you use lucide
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"; 
 
 const months = ["2026-04", "2026-05", "2026-06"];
 const displayMonths = ["აპრილი 2026", "მაისი 2026", "ივნისი 2026"];

@@ -18,14 +18,18 @@ export default function Home() {
   const fetchBankTransactions = async () => {
     const { data, error } = await supabase
       .from("bank_transactions")
-      .select("*")
+      .select("*").throwOnError()
       
-    if (error) console.error(error);
-    console.log(data);
-    return data;
+   console.table(data?.map(t => ({ id: t.id, status: t.status, matched_company_id: t.matched_company_id })));
+  return data;
   };
 
   return (
-<><MainDashboard/></>
+<>
+<MainDashboard/>
+<>
+<button onClick={fetchContracts}>contracts</button>
+<button onClick={fetchBankTransactions}>bank_transactions</button></>
+</>
   );
 }
