@@ -3,11 +3,18 @@ import { supabase } from "../supabase";
 import { fetchTransactionsByMonth } from "../apiCalls/FetchTransactionsByMonth";
 import { fetchContractsByMonth } from "../apiCalls/FetchContractsByMonth";
 import { fetchCompaniesByMonth } from "../apiCalls/FetchCompaniesByMonth";
+import { fetchAllCompanies } from "../apiCalls/FetchAllCompanies";
 import { QUERY_KEYS } from "../constants";
 
 
 
 // -------------------------------------- HOOKS --------------------------------
+export const useAllCompanies = () =>
+  useQuery({
+    queryKey: ["all_companies"],
+    queryFn: fetchAllCompanies,
+  });
+
 export const useBankTransactions = (selectedMonth: string) =>
   useQuery({
     // Using the factory function directly guarantees type safety and consistency

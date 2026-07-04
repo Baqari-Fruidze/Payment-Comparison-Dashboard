@@ -30,10 +30,10 @@ function IconBadge({
 
 export default function MainInfoPanel() {
   const searchParams = useSearchParams();
-  const selectedMonth = searchParams.get("month") ?? "2026-04";
+  const selectedMonth = searchParams.get("month") ?? "2026-06";
 
   const { data: transactions, isLoading } = useBankTransactions(selectedMonth);
-
+  console.log(transactions);
   const total = transactions?.length;
 
   const matched = transactions?.filter(

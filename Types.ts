@@ -10,3 +10,15 @@ export interface ISingleInfoContainerProps {
   rightSlot?: React.ReactNode;
   isLoading?: boolean;
 }
+
+export type RowStatus = "სრულიად გადახდილი" | "ნაკლები" | "არაქტიური";
+
+export interface CompanyRow {
+  id: string;
+  name: string;
+  activeContracts: number;
+  expected: number;
+  actual: number;
+  difference: number;
+  status: RowStatus;
+}
