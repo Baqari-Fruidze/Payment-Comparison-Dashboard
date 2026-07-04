@@ -1,31 +1,16 @@
 "use client";
-
-import {
-  LayoutDashboard,
-  ArrowLeftRight,
-  Building2,
-  FileText,
-  BarChart2,
-  Settings,
-} from "lucide-react";
+import { navigationData } from "@/lib/constants";
 import { useState } from "react";
 
-const navItems = [
-  { label: "დეშბორდი", icon: LayoutDashboard },
-  { label: "ტრანზაქციები", icon: ArrowLeftRight },
-  { label: "კომპანიები", icon: Building2 },
-  { label: "კონტრაქტები", icon: FileText },
-  { label: "ანგარიშები", icon: BarChart2 },
-  { label: "პარამეტრები", icon: Settings },
-];
+
 
 export default function Sidebar() {
   const [active, setActive] = useState(0);
 
   return (
-    <aside className="flex flex-col w-48 border-r border-gray-100 bg-white py-3 shrink-0">
+    <aside className="flex flex-col w-48 border-r border-gray-100 bg-white py-3 shrink-0 min-h-screen">
       <nav className="flex flex-col gap-0.5 px-2">
-        {navItems.map((item, index) => {
+        {navigationData.map((item, index) => {
           const Icon = item.icon;
           const isActive = active === index;
           return (

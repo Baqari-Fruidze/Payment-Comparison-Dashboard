@@ -3,19 +3,9 @@ import { supabase } from "../supabase";
 import { fetchTransactionsByMonth } from "../apiCalls/FetchTransactionsByMonth";
 import { fetchContractsByMonth } from "../apiCalls/FetchContractsByMonth";
 import { fetchCompaniesByMonth } from "../apiCalls/FetchCompaniesByMonth";
+import { QUERY_KEYS } from "../constants";
 
-// ─── Query Key Factory ────────────────────────────────────────────────────────
-export const QUERY_KEYS = {
-  // 1. Define the "root folders"
-  transactions: ["bank_transactions"] as const,
-  contracts: ["contracts"] as const,
-  companies: ["companies"] as const,
-  
-  // 2. (Optional but recommended) Define helpers for specific sub-folders
-  transactionsByMonth: (month: string) => [...QUERY_KEYS.transactions, month] as const,
-  contractsByMonth: (month: string) => [...QUERY_KEYS.contracts, month] as const,
-  companiesByMonth: (month: string) => [...QUERY_KEYS.companies, month] as const,
-};
+
 
 // -------------------------------------- HOOKS --------------------------------
 export const useBankTransactions = (selectedMonth: string) =>
@@ -38,7 +28,7 @@ export const useCompanies = (selectedMonth: string) =>
   });
 
 // ─── Auto-Matching Mutation ───────────────────────────────────────────────────
-// Runs the RPC, then immediately re-fetches transactions, contracts & companies
+
 export const useAutoMatching = () => {
   const queryClient = useQueryClient();
 
@@ -48,7 +38,7 @@ export const useAutoMatching = () => {
       if (error) throw new Error(error.message);
     },
     onSuccess: () => {
-      // Invalidate all three — React Query will re-fetch them automatically
+        // check if data is renewed first ???
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.transactions });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.contracts });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.companies });
