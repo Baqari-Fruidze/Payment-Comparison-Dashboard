@@ -1,8 +1,6 @@
 "use client";
 import { useSearchParams } from "next/navigation";
-import {
-  useBankTransactions,
-} from "@/lib/hooks/useSupabaseData";
+import { useBankTransactions } from "@/lib/hooks/useSupabaseData";
 import SingleInfoContainer from "./SingleInfoContainer";
 import {
   ClipboardList,
@@ -22,12 +20,13 @@ function IconBadge({
   bg: string;
 }) {
   return (
-    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${bg}`}>
+    <div
+      className={`w-8 h-8 rounded-full flex items-center justify-center ${bg}`}
+    >
       {children}
     </div>
   );
 }
-
 
 export default function MainInfoPanel() {
   const searchParams = useSearchParams();
@@ -37,12 +36,16 @@ export default function MainInfoPanel() {
 
   const total = transactions?.length;
 
-  const matched = transactions?.filter((item) => item.status === "matched").length;
+  const matched = transactions?.filter(
+    (item) => item.status === "matched",
+  ).length;
   const matchedAmount = transactions
     ?.filter((item) => item.status === "matched")
     .reduce((sum, t) => sum + Number(t.amount), 0);
 
-  const unmatched = transactions?.filter((item) => item.status === "unmatched").length;
+  const unmatched = transactions?.filter(
+    (item) => item.status === "unmatched",
+  ).length;
   const unmatchedAmount = transactions
     ?.filter((item) => item.status === "unmatched")
     .reduce((sum, t) => sum + Number(t.amount), 0);
@@ -54,12 +57,12 @@ export default function MainInfoPanel() {
 
   const totalAmount = transactions?.reduce(
     (sum, t) => sum + Number(t.amount),
-    0
+    0,
   );
 
   return (
-    <div className="flex items-stretch gap-3 p-4 w-full">
-{/* totali */}
+    <div className="flex items-stretch gap-3  w-full">
+      {/* totali */}
       <SingleInfoContainer
         title="ტრანზაქციების რაოდენობა"
         count={total}
@@ -104,7 +107,7 @@ export default function MainInfoPanel() {
         }
       />
 
-     {/* ignorirebuli */}
+      {/* ignorirebuli */}
       <SingleInfoContainer
         title="იგნორირებული"
         count={ignored}
@@ -120,11 +123,7 @@ export default function MainInfoPanel() {
       />
 
       {/* charti */}
-      <DonutChart
-        matched={matched}
-        total={total}
-        isLoading={isLoading}
-      />
+      <DonutChart matched={matched} total={total} isLoading={isLoading} />
     </div>
   );
 }
