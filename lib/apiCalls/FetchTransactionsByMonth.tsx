@@ -1,7 +1,8 @@
 import { supabase } from '@/lib/supabase';
 import { getMonthValue } from '@/lib/helperFunctions/GetMonthValue';
+import { IBankTransactionType } from '@/Types';
 
-export const fetchTransactionsByMonth = async (selectedMonth: string) => {
+export const fetchTransactionsByMonth = async (selectedMonth: string): Promise<IBankTransactionType[]> => {
   const { startDate, endDate } = getMonthValue(selectedMonth);
 
   const { data, error } = await supabase
@@ -11,5 +12,5 @@ export const fetchTransactionsByMonth = async (selectedMonth: string) => {
     .lte('entry_date', endDate);
 
   if (error) throw new Error(error.message);
-  return data;
-};
+  return data as IBankTransactionType[];
+};

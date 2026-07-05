@@ -1,7 +1,8 @@
 import { supabase } from '@/lib/supabase';
 import { getMonthValue } from '@/lib/helperFunctions/GetMonthValue';
+import { ICompanyType } from '@/Types';
 
-export const fetchCompaniesByMonth = async (selectedMonth: string) => {
+export const fetchCompaniesByMonth = async (selectedMonth: string): Promise<ICompanyType[]> => {
   const { startDate, endDate } = getMonthValue(selectedMonth);
 
   const { data, error } = await supabase
@@ -11,5 +12,5 @@ export const fetchCompaniesByMonth = async (selectedMonth: string) => {
     .lte('created_at', endDate);
 
   if (error) throw new Error(error.message);
-  return data;
-};
+  return data as ICompanyType[];
+};

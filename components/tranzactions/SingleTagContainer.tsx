@@ -14,11 +14,15 @@ export default function SingleTagContainer({
 }) {
   return (
     <div
-      className={`px-2 py-1 rounded-md border border-gray-200 ${isSelected ? color : "bg-gray-500"} flex items-center gap-1`}
+      className={`px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-1.5 transition-all ${
+        isSelected
+          ? "bg-white border border-gray-300 shadow-sm"
+          : "border border-transparent text-gray-500 hover:bg-gray-100"
+      }`}
     >
       <Cycle color={color} />
-      {text}
-      <span className="font-bold">({trazactionCount})</span>
+      <span>{text}</span>
+      <span className="font-semibold">({trazactionCount})</span>
     </div>
   );
 }

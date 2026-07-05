@@ -1,15 +1,22 @@
 "use client";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import {
   useAllCompanies,
   useContracts,
   useBankTransactions,
 } from "@/lib/hooks/useSupabaseData";
-import { CompanyRow, RowStatus } from "@/Types";
+import {
+  CompanyRow,
+  RowStatus,
+  ICompanyType,
+  IContractType,
+  IBankTransactionType,
+} from "@/Types";
 import FormatGel from "@/lib/helperFunctions/formatingGel";
 import { STATUS_COLORS } from "@/lib/constants";
 import { ColorSelector } from "@/lib/helperFunctions/ColorSelector";
 import differencePrefix from "@/lib/helperFunctions/DifferencePrefix";
+import CountPageNumbers from "@/lib/helperFunctions/CountPageNumbers";
 
 // ── Skeleton ─────────────────────────────── ??  <<< must check
 
@@ -27,9 +34,14 @@ function SkeletonRow() {
 
 export default function CompaniesTable() {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
   const selectedMonth = searchParams.get("month") ?? "2026-06";
+  const currentPage = Number(searchParams.get("compPage") ?? "1");
+  const perPage = Number(searchParams.get("compPerPage") ?? "10");
 
   const { data: companies, isLoading: loadingCompanies } = useAllCompanies();
+
   const { data: contracts, isLoading: loadingContracts } =
     useContracts(selectedMonth);
   const { data: transactions, isLoading: loadingTx } =
@@ -37,14 +49,12 @@ export default function CompaniesTable() {
 
   const isLoading = loadingCompanies || loadingContracts || loadingTx;
 
-  const rows: CompanyRow[] = (companies ?? []).map((company) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const c = company as any;
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const companyContracts = (contracts ?? []).filter((ct: any) => {
-      return ct.company_id === c.id;
-    });
+  const rows: CompanyRow[] = (companies ?? []).map((c: ICompanyType) => {
+    const companyContracts = (contracts ?? []).filter(
+      (contract: IContractType) => {
+        return contract.company_id === c.id;
+      },
+    );
     const activeContracts = companyContracts.length;
 
     if (activeContracts === 0) {
@@ -60,26 +70,29 @@ export default function CompaniesTable() {
     }
 
     // Step 2: Expected = sum of monthly_amount from overlapping contracts
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const expectedMoney = companyContracts.reduce((sum: number, ct: any) => {
-      return sum + Number(ct.monthly_amount ?? 0);
-    }, 0);
+    const expectedMoney = companyContracts.reduce(
+      (sum: number, contract: IContractType) => {
+        return sum + Number(contract.monthly_amount ?? 0);
+      },
+      0,
+    );
 
-    // Step 3: Check in transactions if money was transferred
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const companyTransactions = (transactions ?? []).filter((t: any) => {
-      return t.matched_company_id === c.id && t.status === "matched";
-    });
-
+    const companyTransactions = (transactions ?? []).filter(
+      (t: IBankTransactionType) => {
+        return t.matched_company_id === c.id && t.status === "matched";
+      },
+    );
+    ///    count transactions of company
+    const transactionCount = companyTransactions.length;
+    console.log(transactionCount);
     const actual = companyTransactions.reduce(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (sum: number, t: any) => sum + Number(t.amount ?? 0),
+      (sum: number, t: IBankTransactionType) => sum + Number(t.amount ?? 0),
       0,
     );
 
     const difference = actual - expectedMoney;
 
-    // Step 4: Is actual equal to, more, or less than expected?
+    // status calculator
     const status: RowStatus = difference >= 0 ? "სრულიად გადახდილი" : "ნაკლები";
 
     return {
@@ -92,6 +105,31 @@ export default function CompaniesTable() {
       status,
     };
   });
+
+  // Pagination
+  const totalItems = rows.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / perPage));
+  const safePage = Math.min(currentPage, Math.max(1, totalPages));
+  const startIdx = (safePage - 1) * perPage;
+  const pageItems = rows.slice(startIdx, startIdx + perPage);
+
+  // Page handler
+  const goToPage = (page: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (page === 1) {
+      params.delete("compPage");
+    } else {
+      params.set("compPage", String(page));
+    }
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
+  };
+
+  const handlePerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("compPerPage", e.target.value);
+    params.delete("compPage");
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
+  };
 
   return (
     <div className="overflow-x-auto mt-4">
@@ -108,8 +146,8 @@ export default function CompaniesTable() {
         </thead>
         <tbody>
           {isLoading
-            ? [...Array(6)].map((_, i) => <SkeletonRow key={i} />)
-            : rows.map((row) => (
+            ? [...Array(perPage)].map((_, i) => <SkeletonRow key={i} />)
+            : pageItems.map((row) => (
                 <tr
                   key={row.id}
                   className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
@@ -144,10 +182,67 @@ export default function CompaniesTable() {
         </tbody>
       </table>
 
-      {!isLoading && rows.length === 0 && (
+      {!isLoading && pageItems.length === 0 && (
         <p className="text-center text-gray-400 text-sm py-8">
           მონაცემები არ მოიძებნა
         </p>
+      )}
+
+      {/* Pagination footer */}
+      {!isLoading && totalPages > 0 && (
+        <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100">
+          <div className="flex items-center gap-1">
+            <button
+              disabled={safePage === 1}
+              onClick={() => goToPage(safePage - 1)}
+              className="px-2 py-1 text-sm text-gray-500 hover:text-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
+            >
+              &lt;
+            </button>
+            {CountPageNumbers(safePage, totalPages).map((p, idx) =>
+              p === "..." ? (
+                <span
+                  key={`dot-${idx}`}
+                  className="px-1.5 text-gray-400 text-sm"
+                >
+                  ...
+                </span>
+              ) : (
+                <button
+                  key={p}
+                  onClick={() => goToPage(p as number)}
+                  className={`w-8 h-8 rounded-md text-sm font-medium transition-colors cursor-pointer ${
+                    safePage === p
+                      ? "bg-blue-50 text-blue-600 border border-blue-200"
+                      : "text-gray-600 hover:bg-gray-100"
+                  }`}
+                >
+                  {p}
+                </button>
+              ),
+            )}
+            <button
+              disabled={safePage === totalPages}
+              onClick={() => goToPage(safePage + 1)}
+              className="px-2 py-1 text-sm text-gray-500 hover:text-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
+            >
+              &gt;
+            </button>
+          </div>
+
+          <div className="flex items-center gap-2 text-sm text-gray-500">
+            <select
+              value={perPage}
+              onChange={handlePerPageChange}
+              className="border border-gray-200 rounded-md px-2 py-1 text-sm bg-white cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-100"
+            >
+              <option value="5">5 / გვერდზე</option>
+              <option value="10">10 / გვერდზე</option>
+              <option value="20">20 / გვერდზე</option>
+              <option value="50">50 / გვერდზე</option>
+            </select>
+          </div>
+        </div>
       )}
     </div>
   );

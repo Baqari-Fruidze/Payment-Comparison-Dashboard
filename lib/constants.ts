@@ -42,3 +42,10 @@ export const transactionStatus = {
   შეუსაბამო: "bg-red-50 text-red-600 border border-red-200",
   იგნორირებული: "bg-gray-100 text-gray-500 border border-gray-200",
 };
+
+export const TAG_COLORS: Record<string, string> = {
+  ყველა: "#6b7280",
+  დამთხვეული: "#16a34a",
+  შეუსაბამო: "#dc2626",
+  იგნორირებული: "#6b7280",
+};
