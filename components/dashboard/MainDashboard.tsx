@@ -3,6 +3,7 @@ import MainHeader from "../header/MainHeader";
 import MainInfoPanel from "../infoPanel/MainInfoPanel";
 import Sidebar from "../sidebar/Sidebar";
 import CompaniesMain from "../companies/CompaniesMain";
+import MainTranzactions from "../tranzactions/MainTranzactions";
 
 export default function MainDashboard() {
   return (
@@ -28,6 +29,7 @@ export default function MainDashboard() {
           <div className="flex-1 w-full flex flex-col gap-5 p-4">
             <MainInfoPanel />
             <CompaniesMain />
+            <MainTranzactions />
           </div>
         </Suspense>
       </div>

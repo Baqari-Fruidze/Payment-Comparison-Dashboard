@@ -35,3 +35,10 @@ export const STATUS_COLORS: Record<RowStatus, string> = {
   ნაკლები: "bg-red-50 text-red-600 border border-red-200",
   არაქტიური: "bg-gray-100 text-gray-500 border border-gray-200",
 };
+
+export const transactionStatus = {
+  ყველა: "bg-gray-100 text-gray-500 border border-gray-200",
+  დამთხვეული: "bg-green-50 text-green-700 border border-green-200",
+  შეუსაბამო: "bg-red-50 text-red-600 border border-red-200",
+  იგნორირებული: "bg-gray-100 text-gray-500 border border-gray-200",
+};
