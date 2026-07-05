@@ -1,18 +1,21 @@
 "use client";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { useValidatedParams } from "@/lib/hooks/useValidatedParams";
 import { transactionStatus, TAG_COLORS } from "@/lib/constants";
 import { useBankTransactions } from "@/lib/hooks/useSupabaseData";
 import { IBankTransactionType } from "@/Types";
 import SingleTagContainer from "./SingleTagContainer";
-import { Search, SlidersHorizontal } from "lucide-react";
+import { Search } from "lucide-react";
 
 export default function TranzactionsTags() {
   const searchParams = useSearchParams();
+  const {
+    month: selectedMonth,
+    txFilter: activeFilter,
+    txSearch: searchQuery,
+  } = useValidatedParams();
   const router = useRouter();
   const pathname = usePathname();
-  const selectedMonth = searchParams.get("month") ?? "2026-06";
-  const activeFilter = searchParams.get("txFilter") ?? "ყველა";
-  const searchQuery = searchParams.get("txSearch") ?? "";
 
   const { data: transactions } = useBankTransactions(selectedMonth);
 

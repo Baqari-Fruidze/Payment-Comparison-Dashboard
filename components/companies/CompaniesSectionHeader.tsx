@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useSearchParams } from "next/navigation";
+import { useValidatedParams } from "@/lib/hooks/useValidatedParams";
 
 const months: Record<string, string> = {
   "2026-04": "აპრილი",
@@ -10,8 +11,7 @@ const months: Record<string, string> = {
 };
 
 export default function CompaniesSectionHeader() {
-  const searchParams = useSearchParams();
-  const selectedMonth = searchParams.get("month") ?? "2026-06";
+  const { month: selectedMonth } = useValidatedParams();
 
   return (
     <div className="flex items-center gap-2 flex-wrap">

@@ -1,5 +1,6 @@
 "use client";
 import { useSearchParams } from "next/navigation";
+import { useValidatedParams } from "@/lib/hooks/useValidatedParams";
 import { useBankTransactions } from "@/lib/hooks/useSupabaseData";
 import SingleInfoContainer from "./SingleInfoContainer";
 import {
@@ -29,8 +30,7 @@ function IconBadge({
 }
 
 export default function MainInfoPanel() {
-  const searchParams = useSearchParams();
-  const selectedMonth = searchParams.get("month") ?? "2026-06";
+  const { month: selectedMonth } = useValidatedParams();
 
   const { data: transactions, isLoading } = useBankTransactions(selectedMonth);
   console.log(transactions);

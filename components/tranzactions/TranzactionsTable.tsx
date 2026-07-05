@@ -1,5 +1,6 @@
 "use client";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { useValidatedParams } from "@/lib/hooks/useValidatedParams";
 import {
   useBankTransactions,
   useAllCompanies,
@@ -26,15 +27,9 @@ function SkeletonRow() {
 
 export default function TranzactionsTable() {
   const searchParams = useSearchParams();
+  const { month: selectedMonth, txFilter: activeFilter, txSearch: searchQuery, txPage: currentPage, txSort: sortField, txDir: sortDir, txPerPage: perPage } = useValidatedParams();
   const router = useRouter();
   const pathname = usePathname();
-  const selectedMonth = searchParams.get("month") ?? "2026-06";
-  const activeFilter = searchParams.get("txFilter") ?? "ყველა";
-  const searchQuery = searchParams.get("txSearch") ?? "";
-  const currentPage = Number(searchParams.get("txPage") ?? "1");
-  const sortField = (searchParams.get("txSort") as SortField) ?? "entry_date";
-  const sortDir = (searchParams.get("txDir") as SortDir) ?? "asc";
-  const perPage = Number(searchParams.get("txPerPage") ?? "10");
 
   const { data: transactions, isLoading: loadingTx } =
     useBankTransactions(selectedMonth);

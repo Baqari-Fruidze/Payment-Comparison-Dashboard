@@ -1,5 +1,6 @@
 "use client";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { useValidatedParams } from "@/lib/hooks/useValidatedParams";
 import {
   useAllCompanies,
   useContracts,
@@ -34,11 +35,9 @@ function SkeletonRow() {
 
 export default function CompaniesTable() {
   const searchParams = useSearchParams();
+  const { month: selectedMonth, compPage: currentPage, compPerPage: perPage } = useValidatedParams();
   const router = useRouter();
   const pathname = usePathname();
-  const selectedMonth = searchParams.get("month") ?? "2026-06";
-  const currentPage = Number(searchParams.get("compPage") ?? "1");
-  const perPage = Number(searchParams.get("compPerPage") ?? "10");
 
   const { data: companies, isLoading: loadingCompanies } = useAllCompanies();
 

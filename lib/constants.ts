@@ -21,14 +21,7 @@ export const QUERY_KEYS = {
     [...QUERY_KEYS.companies, month] as const,
 };
 
-export const navigationData = [
-  { label: "დეშბორდი", icon: LayoutDashboard },
-  { label: "ტრანზაქციები", icon: ArrowLeftRight },
-  { label: "კომპანიები", icon: Building2 },
-  { label: "კონტრაქტები", icon: FileText },
-  { label: "ანგარიშები", icon: BarChart2 },
-  { label: "პარამეტრები", icon: Settings },
-];
+export const navigationData = [{ label: "დეშბორდი", icon: LayoutDashboard }];
 
 export const STATUS_COLORS: Record<RowStatus, string> = {
   "სრულიად გადახდილი": "bg-green-50 text-green-700 border border-green-200",

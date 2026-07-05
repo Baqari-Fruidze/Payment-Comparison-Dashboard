@@ -1,6 +1,7 @@
 "use client"; 
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { useValidatedParams } from "@/lib/hooks/useValidatedParams";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"; 
 
 const months = ["2026-04", "2026-05", "2026-06"];
@@ -10,9 +11,7 @@ export default function MonthPicker() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-
-    
-  const currentMonth = searchParams.get("month") || months[0];
+  const { month: currentMonth } = useValidatedParams();
   const displayedMonth = displayMonths[months.indexOf(currentMonth)];
   const currentMonthIndex = months.indexOf(currentMonth);
 
